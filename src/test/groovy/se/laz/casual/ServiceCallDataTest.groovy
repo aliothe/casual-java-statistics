@@ -5,7 +5,19 @@ import java.time.Duration
 
 class ServiceCallDataTest extends Specification
 {
-   def 'creation'()
+   def 'failed creation'()
+   {
+      when:
+      new ServiceCallData(callTime, pendingTime)
+      then:
+      thrown(NullPointerException)
+      where:
+      callTime                       || pendingTime
+      Duration.ofMillis(100)         || null
+      null                           || Duration.ofMillis(100)
+   }
+
+   def 'ok creation'()
    {
       given:
       Duration callTime = Duration.ofMillis(100)
@@ -16,4 +28,22 @@ class ServiceCallDataTest extends Specification
       data.callTimeInMilliseconds() == callTime
       data.pendingTimeInMilliseconds() == pendingTime
    }
+
+   def  'builder creation'()
+   {
+      given:
+      long start = 0
+      long end = 500
+      long pending = 100
+      when:
+      ServiceCallData data = ServiceCallData.newBuilder()
+              .withStart(start)
+              .withEnd(end)
+              .withPending(pending)
+              .build()
+      then:
+      data.callTimeInMilliseconds().toMillis() == (end - start)
+      data.pendingTimeInMilliseconds().toMillis() == pending
+   }
+
 }

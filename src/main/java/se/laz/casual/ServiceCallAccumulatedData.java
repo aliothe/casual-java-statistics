@@ -30,8 +30,8 @@ public record ServiceCallAccumulatedData(long numberOfCalls, Duration averageTim
         Duration newAverageTime = Duration.ofMillis((averageTime.toMillis() * numberOfCalls + callTime) / (numberOfCalls + 1));
         Duration newMinTime = callTime < oldMinTime ? Duration.ofMillis(callTime) : minTime;
         Duration newMaxTime = callTime > oldMaxTime ? Duration.ofMillis(callTime) : maxTime;
-        Duration newAveragePendingTime = !pendingAverageTime.isZero() ? Duration.ofMillis((pendingAverageTime.toMillis() * numberOfPending + callTime) / (numberOfPending + 1)) : Duration.ZERO;
-        long newNumberOfPending = !pendingAverageTime.isZero() ? numberOfPending + 1 : numberOfPending;
+        Duration newAveragePendingTime = !serviceCallData.pendingTimeInMilliseconds().isZero() ? Duration.ofMillis((pendingAverageTime.toMillis() * numberOfPending + serviceCallData.pendingTimeInMilliseconds().toMillis()) / (numberOfPending + 1)) : pendingAverageTime;
+        long newNumberOfPending = !serviceCallData.pendingTimeInMilliseconds().isZero() ? numberOfPending + 1 : numberOfPending;
         return new ServiceCallAccumulatedData(numberOfCalls + 1, newAverageTime, newMinTime, newMaxTime, newNumberOfPending, newAveragePendingTime, newLastCall);
     }
 
