@@ -25,8 +25,8 @@ class ServiceCallDataTest extends Specification
       when:
       ServiceCallData data = new ServiceCallData(callTime, pendingTime)
       then:
-      data.callTimeInMilliseconds() == callTime
-      data.pendingTimeInMilliseconds() == pendingTime
+      data.callTimeInMicroseconds() == callTime
+      data.pendingTimeInMicroseconds() == pendingTime
    }
 
    def  'builder creation'()
@@ -42,8 +42,8 @@ class ServiceCallDataTest extends Specification
               .withPending(pending)
               .build()
       then:
-      data.callTimeInMilliseconds().toMillis() == (end - start)
-      data.pendingTimeInMilliseconds().toMillis() == pending
+      data.callTimeInMicroseconds().toMillis() == (end - start)
+      data.pendingTimeInMicroseconds().toMillis() == pending
    }
 
 }

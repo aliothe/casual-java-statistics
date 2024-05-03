@@ -5,12 +5,12 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-public record ServiceCallData(Duration callTimeInMilliseconds, Duration pendingTimeInMilliseconds)
+public record ServiceCallData(Duration callTimeInMicroseconds, Duration pendingTimeInMicroseconds)
 {
     public ServiceCallData
     {
-        Objects.requireNonNull(callTimeInMilliseconds, "callTimeInMilliseconds cannot be null");
-        Objects.requireNonNull(pendingTimeInMilliseconds, "pendingTimeInMilliseconds cannot be null");
+        Objects.requireNonNull(callTimeInMicroseconds, "callTimeInMilliseconds cannot be null");
+        Objects.requireNonNull(pendingTimeInMicroseconds, "pendingTimeInMilliseconds cannot be null");
     }
     public static Builder newBuilder()
     {
@@ -39,10 +39,11 @@ public record ServiceCallData(Duration callTimeInMilliseconds, Duration pendingT
         }
         public ServiceCallData build()
         {
-            Duration pendingTime = Duration.of(pending, ChronoUnit.MILLIS);
-            Instant startTime = Instant.ofEpochMilli(start);
-            Instant endTime = Instant.ofEpochMilli(end);
+            Duration pendingTime = Duration.of(pending, ChronoUnit.MICROS);
+            Instant startTime = TimeConverter.toInstant(start);
+            Instant endTime = TimeConverter.toInstant(end);
             return new ServiceCallData(Duration.between(startTime, endTime), pendingTime);
         }
+
     }
 }
