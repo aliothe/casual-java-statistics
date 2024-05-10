@@ -2,9 +2,7 @@ import se.laz.casual.ServiceCallData
 import spock.lang.Specification
 
 import java.time.Duration
-
-import static se.laz.casual.TimeConverter.toDuration
-import static se.laz.casual.TimeConverter.toMicroSeconds
+import java.time.temporal.ChronoUnit
 
 class ServiceCallDataTest extends Specification
 {
@@ -15,15 +13,15 @@ class ServiceCallDataTest extends Specification
       then:
       thrown(NullPointerException)
       where:
-      callTime                       || pendingTime
-      toDuration(100)         || null
-      null                           || toDuration(100)
+      callTime                                    || pendingTime
+      Duration.of(100, ChronoUnit.MICROS)         || null
+      null                                        || Duration.of(100, ChronoUnit.MICROS)
    }
 
    def 'ok creation'()
    {
       given:
-      Duration callTime = toDuration(1000)
+      Duration callTime = Duration.of(1000, ChronoUnit.MICROS)
       Duration pendingTime = Duration.ZERO
       when:
       ServiceCallData data = new ServiceCallData(callTime, pendingTime)
@@ -38,6 +36,8 @@ class ServiceCallDataTest extends Specification
       long start = 0
       long end = 500
       long pending = 100
+      Duration callDuration = Duration.of(end, ChronoUnit.MICROS)
+      Duration pendingDuration = Duration.of(pending, ChronoUnit.MICROS)
       when:
       ServiceCallData data = ServiceCallData.newBuilder()
               .withStart(start)
@@ -45,8 +45,8 @@ class ServiceCallDataTest extends Specification
               .withPending(pending)
               .build()
       then:
-      toMicroSeconds(data.callTimeInMicroseconds()) == (end - start)
-      toMicroSeconds(data.pendingTimeInMicroseconds()) == pending
+      data.callTimeInMicroseconds() == callDuration
+      data.pendingTimeInMicroseconds() == pendingDuration
    }
 
 }

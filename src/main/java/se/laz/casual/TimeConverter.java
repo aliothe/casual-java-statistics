@@ -1,6 +1,5 @@
 package se.laz.casual;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
@@ -18,16 +17,5 @@ public class TimeConverter
         long seconds = instant.getEpochSecond();
         long nanos = instant.getNano();
         return seconds * 1_000_000 + nanos / 1_000;
-    }
-
-    public static long toMicroSeconds(Duration duration)
-    {
-        return TimeUnit.NANOSECONDS.toMicros(duration.toNanos());
-    }
-
-    public static Duration toDuration(long microseconds)
-    {
-        long nanos = microseconds * 1000;
-        return Duration.ofNanos(nanos);
     }
 }
