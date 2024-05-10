@@ -37,7 +37,7 @@ class ServiceCallAccumulatedDataTest extends Specification
               .withServiceCallData(initialData)
               .build()
       then: // initial check
-      accumulatedData.numberOfCalls() == numberOfCalls
+      accumulatedData.numberOfServiceCalls() == numberOfCalls
       toMicroSeconds(accumulatedData.minTime()) == initialCallTime
       toMicroSeconds(accumulatedData.maxTime()) == initialCallTime
       toMicroSeconds(accumulatedData.averageTime()) == initialCallTime
@@ -47,7 +47,7 @@ class ServiceCallAccumulatedDataTest extends Specification
       when: // add call but no pending
       accumulatedData = accumulatedData.accumulate(noPendingData)
       then:
-      accumulatedData.numberOfCalls() == ++numberOfCalls
+      accumulatedData.numberOfServiceCalls() == ++numberOfCalls
       toMicroSeconds(accumulatedData.minTime()) == initialCallTime
       toMicroSeconds(accumulatedData.maxTime()) == secondCallTime
       toMicroSeconds(accumulatedData.averageTime()) == (initialCallTime + secondCallTime) / numberOfCalls
@@ -57,7 +57,7 @@ class ServiceCallAccumulatedDataTest extends Specification
       when: // add call with pending
       accumulatedData = accumulatedData.accumulate(moreDataWithPending)
       then:
-      accumulatedData.numberOfCalls() == ++numberOfCalls
+      accumulatedData.numberOfServiceCalls() == ++numberOfCalls
       toMicroSeconds(accumulatedData.minTime()) == initialCallTime
       toMicroSeconds(accumulatedData.maxTime()) == thirdCallTime
       toMicroSeconds(accumulatedData.averageTime()) == (long)((initialCallTime + secondCallTime + thirdCallTime) / numberOfCalls)
