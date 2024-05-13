@@ -1,11 +1,11 @@
-package se.laz.casual
+package se.laz.casual.statistics
 
 import spock.lang.Specification
 
 import java.time.Instant
 
-import static se.laz.casual.TimeConverter.toInstant
-import static se.laz.casual.TimeConverter.toMicroSeconds
+import static se.laz.casual.statistics.TimeConverter.toInstant
+import static se.laz.casual.statistics.TimeConverter.toMicroSeconds
 
 class TimeConverterTest extends Specification
 {

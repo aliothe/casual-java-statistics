@@ -1,4 +1,4 @@
-package se.laz.casual;
+package se.laz.casual.statistics;
 
 import se.laz.casual.event.ServiceCallEvent;
 import se.laz.casual.event.client.EventObserver;

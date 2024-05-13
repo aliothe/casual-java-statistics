@@ -1,4 +1,4 @@
-package se.laz.casual;
+package se.laz.casual.statistics.resource;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

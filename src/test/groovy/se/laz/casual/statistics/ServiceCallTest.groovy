@@ -1,4 +1,5 @@
-package se.laz.casual
+package se.laz.casual.statistics
+
 
 import spock.lang.Specification
 

@@ -1,4 +1,4 @@
-package se.laz.casual
+package se.laz.casual.statistics
 
 import se.laz.casual.api.CasualRuntimeException
 import spock.lang.Shared

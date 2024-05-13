@@ -1,4 +1,4 @@
-package se.laz.casual;
+package se.laz.casual.statistics;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

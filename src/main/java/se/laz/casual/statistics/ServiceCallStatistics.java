@@ -1,4 +1,4 @@
-package se.laz.casual;
+package se.laz.casual.statistics;
 
 import java.util.Map;
 import java.util.Objects;
@@ -8,20 +8,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServiceCallStatistics
 {
     private static final Map<ServiceCallConnection, Map<ServiceCall, ServiceCallAccumulatedData>> statistics = new ConcurrentHashMap<>();
-    private static final Object lock = new Object();
     public static void store(ServiceCallConnection connection, ServiceCall serviceCall, ServiceCallData data)
     {
         Objects.requireNonNull(connection, "connection can not be null");
         Objects.requireNonNull(serviceCall, "serviceCall can not be null");
         Objects.requireNonNull(data, "data can not be null");
-        synchronized (lock)
-        {
-            Map<ServiceCall, ServiceCallAccumulatedData> accumulatedByServiceCall = statistics.computeIfAbsent(connection, k -> new ConcurrentHashMap<>());
-            ServiceCallAccumulatedData maybeCachedData = accumulatedByServiceCall.get(serviceCall);
-            maybeCachedData = null != maybeCachedData ? maybeCachedData.accumulate(data) : ServiceCallAccumulatedData.newBuilder()
-                                                                                                                     .withServiceCallData(data).build();
-            accumulatedByServiceCall.put(serviceCall, maybeCachedData);
-        }
+        statistics.compute(connection, (conn, accumulatedByServiceCall) -> {
+            if (accumulatedByServiceCall == null)
+            {
+                accumulatedByServiceCall = new ConcurrentHashMap<>();
+            }
+            accumulatedByServiceCall.compute(serviceCall, (call, maybeCachedData) -> null == maybeCachedData ?  ServiceCallAccumulatedData.newBuilder().withServiceCallData(data).build() : maybeCachedData.accumulate(data));
+            return accumulatedByServiceCall;
+        });
     }
 
     public static Optional<ServiceCallAccumulatedData> fetch(ServiceCallConnection connection, ServiceCall serviceCall)
@@ -37,9 +36,9 @@ public class ServiceCallStatistics
     static class NullableOptionalData<T>
     {
         private T accumulatedData;
-        public static NullableOptionalData of()
+        public static <T>NullableOptionalData<T> of()
         {
-            return new NullableOptionalData();
+            return new NullableOptionalData<>();
         }
         public void setAccumulatedData(T accumulatedData)
         {

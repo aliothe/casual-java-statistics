@@ -1,4 +1,6 @@
-import se.laz.casual.ServiceCallData
+package se.laz.casual.statistics
+
+
 import spock.lang.Specification
 
 import java.time.Duration

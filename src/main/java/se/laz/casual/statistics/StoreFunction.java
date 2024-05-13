@@ -1,4 +1,4 @@
-package se.laz.casual;
+package se.laz.casual.statistics;
 
 @FunctionalInterface
 public interface StoreFunction
