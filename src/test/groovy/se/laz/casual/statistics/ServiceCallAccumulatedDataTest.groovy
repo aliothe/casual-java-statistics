@@ -4,8 +4,13 @@ package se.laz.casual.statistics
 import spock.lang.Specification
 
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+
+import static se.laz.casual.statistics.TimeConverter.toMicroSeconds
+import static se.laz.casual.statistics.TimeConverter.toInstant
 
 class ServiceCallAccumulatedDataTest extends Specification
 {
@@ -14,28 +19,31 @@ class ServiceCallAccumulatedDataTest extends Specification
       given:
       def numberOfCalls = 1
       def numberOfPending = 1
-      def initialCallTimeMicros = 1000
-      def secondCallTimeMicros = 5000
-      def thirdCallTimeMicros = 12500
-      def initialPendingtimeMicros = 5000
-      def secondPendingtimeMicros = 1000
+      Instant instantNow = Instant.now()
+      long start = toMicroSeconds(instantNow)
+      LocalDateTime lastCall = LocalDateTime.ofInstant(toInstant(start), ZoneId.systemDefault())
+      long initialCallTimeMicros =  1000
+      long secondCallTimeMicros = 5000
+      long thirdCallTimeMicros = 12500
+      long initialPendingtimeMicros = 5000
+      long secondPendingtimeMicros = 1000
       Duration initialCallTime = Duration.of(initialCallTimeMicros, ChronoUnit.MICROS)
       Duration secondCallTime = Duration.of(secondCallTimeMicros, ChronoUnit.MICROS)
       Duration thirdCallTime = Duration.of(thirdCallTimeMicros, ChronoUnit.MICROS)
       Duration initialPendingTime = Duration.of(initialPendingtimeMicros, ChronoUnit.MICROS)
       Duration secondPendingTime = Duration.of(secondPendingtimeMicros, ChronoUnit.MICROS)
       ServiceCallData initialData = ServiceCallData.newBuilder()
-              .withStart(0)
-              .withEnd(initialCallTimeMicros)
+              .withStart(start)
+              .withEnd(start + initialCallTimeMicros)
               .withPending(initialPendingtimeMicros)
               .build()
       ServiceCallData noPendingData = ServiceCallData.newBuilder()
-              .withStart(0)
-              .withEnd(secondCallTimeMicros)
+              .withStart(start)
+              .withEnd(start + secondCallTimeMicros)
               .build()
       ServiceCallData moreDataWithPending = ServiceCallData.newBuilder()
-              .withStart(0)
-              .withEnd(thirdCallTimeMicros)
+              .withStart(start)
+              .withEnd(start + thirdCallTimeMicros)
               .withPending(secondPendingtimeMicros)
               .build()
       when:
@@ -49,7 +57,7 @@ class ServiceCallAccumulatedDataTest extends Specification
       accumulatedData.averageTime() == initialCallTime
       accumulatedData.numberOfPending() == numberOfPending
       accumulatedData.pendingAverageTime() == initialPendingTime
-      accumulatedData.lastCall().isBefore(LocalDateTime.now())
+      accumulatedData.lastCall() == lastCall
       when: // add call but no pending
       accumulatedData = accumulatedData.accumulate(noPendingData)
       then:
@@ -59,7 +67,7 @@ class ServiceCallAccumulatedDataTest extends Specification
       accumulatedData.averageTime() == initialCallTime.plus(secondCallTime).dividedBy(numberOfCalls)
       accumulatedData.numberOfPending() == numberOfPending
       accumulatedData.pendingAverageTime() == initialPendingTime
-      accumulatedData.lastCall().isBefore(LocalDateTime.now())
+      accumulatedData.lastCall() == lastCall
       when: // add call with pending
       accumulatedData = accumulatedData.accumulate(moreDataWithPending)
       then:
@@ -69,6 +77,6 @@ class ServiceCallAccumulatedDataTest extends Specification
       accumulatedData.averageTime() == initialCallTime.plus(secondCallTime).plus(thirdCallTime).dividedBy(numberOfCalls)
       accumulatedData.numberOfPending() == ++numberOfPending
       accumulatedData.pendingAverageTime() == initialPendingTime.plus(secondPendingTime).dividedBy( numberOfPending)
-      accumulatedData.lastCall().isBefore(LocalDateTime.now())
+      accumulatedData.lastCall() == lastCall
    }
 }

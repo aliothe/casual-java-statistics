@@ -2,15 +2,18 @@ package se.laz.casual.statistics;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-public record ServiceCallData(Duration callTimeInMicroseconds, Duration pendingTimeInMicroseconds)
+public record ServiceCallData(Duration callTimeInMicroseconds, Duration pendingTimeInMicroseconds, LocalDateTime lastCall)
 {
     public ServiceCallData
     {
         Objects.requireNonNull(callTimeInMicroseconds, "callTimeInMilliseconds cannot be null");
         Objects.requireNonNull(pendingTimeInMicroseconds, "pendingTimeInMilliseconds cannot be null");
+        Objects.requireNonNull(lastCall, "lastCall cannot be null");
     }
     public static Builder newBuilder()
     {
@@ -42,7 +45,8 @@ public record ServiceCallData(Duration callTimeInMicroseconds, Duration pendingT
             Duration pendingTime = Duration.of(pending, ChronoUnit.MICROS);
             Instant startTime = TimeConverter.toInstant(start);
             Instant endTime = TimeConverter.toInstant(end);
-            return new ServiceCallData(Duration.between(startTime, endTime), pendingTime);
+            LocalDateTime lastCall = LocalDateTime.ofInstant(startTime, ZoneId.systemDefault());
+            return new ServiceCallData(Duration.between(startTime, endTime), pendingTime, lastCall);
         }
 
     }
