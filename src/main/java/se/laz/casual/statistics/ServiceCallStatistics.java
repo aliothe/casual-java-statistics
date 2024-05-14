@@ -27,27 +27,11 @@ public class ServiceCallStatistics
     {
         Objects.requireNonNull(connection, "connection can not be null");
         Objects.requireNonNull(serviceCall, "serviceCall can not be null");
-        Optional<Map<ServiceCall, ServiceCallAccumulatedData>> maybeAccumulatedByServiceCall = Optional.ofNullable(statistics.get(connection));
-        NullableOptionalData<ServiceCallAccumulatedData> maybeAccumulatedData = NullableOptionalData.of();
-        maybeAccumulatedByServiceCall.ifPresent(values -> maybeAccumulatedData.setAccumulatedData(values.get(serviceCall)));
-        return maybeAccumulatedData.getAccumulatedData();
+        Map<ServiceCall, ServiceCallAccumulatedData> accumulatedDataByServiceCall = statistics.get(connection);
+        if(null == accumulatedDataByServiceCall)
+        {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(accumulatedDataByServiceCall.get(serviceCall));
     }
-
-    static class NullableOptionalData<T>
-    {
-        private T accumulatedData;
-        public static <T>NullableOptionalData<T> of()
-        {
-            return new NullableOptionalData<>();
-        }
-        public void setAccumulatedData(T accumulatedData)
-        {
-            this.accumulatedData = accumulatedData;
-        }
-        public Optional<T> getAccumulatedData()
-        {
-            return Optional.ofNullable(accumulatedData);
-        }
-    }
-
 }
