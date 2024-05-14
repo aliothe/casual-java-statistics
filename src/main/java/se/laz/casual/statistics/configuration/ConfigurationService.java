@@ -15,7 +15,7 @@ public class ConfigurationService
     private String configurationFile;
     private ConfigurationService()
     {
-        configurationFile = Optional.ofNullable( System.getenv( ENV_VAR_NAME ) ).orElseThrow(() -> new RuntimeException("CASUAL_STATISTICS_CONFIGURATION_FILE not set"));
+        configurationFile = Optional.ofNullable(System.getenv(ENV_VAR_NAME)).orElse(null);
     }
     public static ConfigurationService getInstance()
     {
@@ -25,7 +25,7 @@ public class ConfigurationService
     {
         if(null == configurationFile)
         {
-            throw new RuntimeException("casual.statistics.configuration.file missing");
+            throw new RuntimeException(ENV_VAR_NAME + " is not set");
         }
         try
         {
