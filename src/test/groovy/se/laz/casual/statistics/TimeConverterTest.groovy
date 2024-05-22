@@ -1,5 +1,6 @@
 package se.laz.casual.statistics
 
+
 import spock.lang.Specification
 
 import java.time.Instant

@@ -1,5 +1,7 @@
 package se.laz.casual.statistics;
 
+import se.laz.casual.event.ServiceCallEventStore;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -13,6 +15,7 @@ public class ServiceCallStatistics
         Objects.requireNonNull(connection, "connection can not be null");
         Objects.requireNonNull(serviceCall, "serviceCall can not be null");
         Objects.requireNonNull(data, "data can not be null");
+        // note, compute is atomic
         statistics.compute(connection, (conn, accumulatedByServiceCall) -> {
             if (accumulatedByServiceCall == null)
             {
@@ -25,6 +28,7 @@ public class ServiceCallStatistics
 
     public static Optional<ServiceCallAccumulatedData> fetch(ServiceCallConnection connection, ServiceCall serviceCall)
     {
+
         Objects.requireNonNull(connection, "connection can not be null");
         Objects.requireNonNull(serviceCall, "serviceCall can not be null");
         Map<ServiceCall, ServiceCallAccumulatedData> accumulatedDataByServiceCall = statistics.get(connection);

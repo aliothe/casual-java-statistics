@@ -1,5 +1,6 @@
 package se.laz.casual.statistics.configuration
 
+import se.laz.casual.statistics.pool.Host
 import spock.lang.Specification
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable
