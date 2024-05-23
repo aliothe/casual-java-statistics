@@ -6,9 +6,12 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public record RepeatUntilSuccessTask<T>(Supplier<T> supplier, Consumer<T> consumer, ScheduleFunction scheduleFunction, BackoffHelper backoffHelper) implements Runnable
 {
+    private static final Logger LOG = Logger.getLogger(RepeatUntilSuccessTask.class.getName());
     public RepeatUntilSuccessTask
     {
         Objects.requireNonNull(supplier, "supplier cannot be null");
@@ -29,6 +32,7 @@ public record RepeatUntilSuccessTask<T>(Supplier<T> supplier, Consumer<T> consum
         }
         catch(Exception e)
         {
+            LOG.log(Level.WARNING, e, () -> "failed running task - will reschedule");
             schedule();
         }
     }

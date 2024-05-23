@@ -2,16 +2,22 @@ package se.laz.casual.statistics.pool;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import se.laz.casual.api.util.work.BackoffHelper;
+import se.laz.casual.event.ServiceCallEventStore;
+import se.laz.casual.event.ServiceCallEventStoreFactory;
+import se.laz.casual.statistics.AugmentedEventStore;
+import se.laz.casual.statistics.AugmentedEventStoreFactory;
 import se.laz.casual.statistics.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ClientPool implements ClientListener
 {
+    private static final UUID DOMAIN_ID = UUID.randomUUID();
     private final List<Client> clients = new ArrayList<>();
     private final Configuration configuration;
     private final ScheduleFunction scheduleFunction;
@@ -35,8 +41,9 @@ public class ClientPool implements ClientListener
 
     private void connect(Host host)
     {
+        AugmentedEventStore eventStore = AugmentedEventStoreFactory.getStore(DOMAIN_ID);
         Supplier<Client> clientSupplier = () -> {
-            Client client = Client.of(host, this);
+            Client client = Client.of(host, this, eventStore);
             client.connect();
             return client;
         };

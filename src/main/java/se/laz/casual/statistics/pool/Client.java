@@ -5,6 +5,11 @@ import se.laz.casual.event.client.ConnectionObserver;
 import se.laz.casual.event.client.EventClient;
 import se.laz.casual.event.client.EventClientBuilder;
 import se.laz.casual.event.client.EventObserver;
+import se.laz.casual.statistics.AugmentedEvent;
+import se.laz.casual.statistics.AugmentedEventStore;
+import se.laz.casual.statistics.ServiceCall;
+import se.laz.casual.statistics.ServiceCallConnection;
+import se.laz.casual.statistics.ServiceCallData;
 
 import java.util.Objects;
 
@@ -12,16 +17,20 @@ public class Client implements EventObserver, ConnectionObserver
 {
     private final Host host;
     private final ClientListener clientListener;
-    public Client(Host host, ClientListener clientListener)
+    private final AugmentedEventStore eventStore;
+
+    public Client(Host host, ClientListener clientListener, AugmentedEventStore eventStore)
     {
         this.host = host;
         this.clientListener = clientListener;
+        this.eventStore = eventStore;
     }
-    public static Client of(Host host, ClientListener clientListener)
+    public static Client of(Host host, ClientListener clientListener, AugmentedEventStore eventStore)
     {
         Objects.requireNonNull(host, "host can not be null");
         Objects.requireNonNull(clientListener, "clientListener can not be null");
-        return new Client(host, clientListener);
+        Objects.requireNonNull(eventStore, "eventStore can not be null");
+        return new Client(host, clientListener, eventStore);
     }
     public void connect()
     {
@@ -38,9 +47,16 @@ public class Client implements EventObserver, ConnectionObserver
         return host;
     }
     @Override
-    public void notify(ServiceCallEvent serviceCallEvent)
+    public void notify(ServiceCallEvent event)
     {
-
+        ServiceCallConnection connection = new ServiceCallConnection(host.connectionName());
+        ServiceCall serviceCall = new ServiceCall(event.getService());
+        ServiceCallData data = ServiceCallData.newBuilder()
+                                              .withStart(event.getStart())
+                                              .withEnd(event.getEnd())
+                                              .withPending(event.getPending())
+                                              .build();
+        eventStore.put(new AugmentedEvent(connection, serviceCall, data));
     }
     @Override
     public boolean equals(Object o)
