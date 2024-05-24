@@ -24,7 +24,7 @@ class StatisticsResourceTest
     void testAllWithNoData()
     {
         given()
-                .when().get("/statistics/all")
+                .when().get("/statistics")
                 .then()
                 .statusCode(200)
                 .contentType("application/json");

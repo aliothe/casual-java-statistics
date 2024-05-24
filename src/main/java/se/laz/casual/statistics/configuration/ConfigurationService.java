@@ -1,16 +1,20 @@
 package se.laz.casual.statistics.configuration;
 
+import org.jboss.logmanager.Level;
 import se.laz.casual.api.external.json.JsonProviderFactory;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class ConfigurationService
 {
     public static final String ENV_VAR_NAME = "CASUAL_STATISTICS_CONFIGURATION_FILE";
+    private static final Logger LOG = Logger.getLogger(ConfigurationService.class.getName());
     private static final ConfigurationService INSTANCE = new ConfigurationService();
     private String configurationFile;
     private ConfigurationService()
@@ -35,16 +39,19 @@ public class ConfigurationService
     }
     private Configuration doGetConfiguration(String filename)
     {
+        Objects.requireNonNull(filename, "filename cannot be null");
         try
         {
             return JsonProviderFactory.getJsonProvider().fromJson(new FileReader(filename, StandardCharsets.UTF_8), Configuration.class);
         }
         catch (FileNotFoundException e)
         {
+            LOG.log(Level.WARNING, e, () -> "Failed to load configuration file: " + filename);
             throw new RuntimeException("could not find configuration file: " + filename, e);
         }
         catch (IOException e)
         {
+            LOG.log(Level.WARNING, e, () -> "Failed to load configuration file: " + filename);
             throw new RuntimeException(e);
         }
     }

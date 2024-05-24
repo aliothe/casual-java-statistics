@@ -1,8 +1,5 @@
 package se.laz.casual.statistics.pool;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import se.laz.casual.api.util.work.BackoffHelper;
 import se.laz.casual.statistics.AugmentedEventStore;
 import se.laz.casual.statistics.AugmentedEventStoreFactory;
@@ -16,7 +13,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
-@ApplicationScoped
 public class ClientPool implements ClientListener
 {
     private static final Logger LOG = Logger.getLogger(ClientPool.class.getName());
@@ -24,19 +20,20 @@ public class ClientPool implements ClientListener
     private UUID domainId;
     private Configuration configuration;
     private ScheduleFunction scheduleFunction;
-    @ConfigProperty(name = "MAX_BACKOFF_MILLISECONDS", defaultValue = "30000")
-    int maxBackoffMilliseconds;
-    @Inject
-    public ClientPool(Configuration config)
+    long maxBackoffMilliseconds;
+    private ClientPool(Configuration config, long maxBackoffMilliseconds, ScheduleFunction scheduleFunction, UUID domainId)
     {
         this.configuration = config;
-    }
-    public void initialize(ScheduleFunction scheduleFunction, UUID domainId)
-    {
-        Objects.requireNonNull(scheduleFunction, "scheduleFunction cannot be null");
-        Objects.requireNonNull(domainId, "domainId cannot be null");
+        this.maxBackoffMilliseconds = maxBackoffMilliseconds;
         this.scheduleFunction = scheduleFunction;
         this.domainId = domainId;
+    }
+    public static ClientPool of(Configuration config, long maxBackoffMilliseconds, ScheduleFunction scheduleFunction, UUID domainId)
+    {
+        Objects.requireNonNull(config, "config cannot be null");
+        Objects.requireNonNull(scheduleFunction, "scheduleFunction cannot be null");
+        Objects.requireNonNull(domainId, "domainId cannot be null");
+        return new ClientPool(config, maxBackoffMilliseconds, scheduleFunction, domainId);
     }
     public void connect()
     {
