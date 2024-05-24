@@ -7,7 +7,6 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static se.laz.casual.statistics.TimeConverter.toMicroseconds;
@@ -30,7 +29,6 @@ public class ServiceCallAccumulatedDataTypeAdapter implements JsonSerializer<Ser
         jsonObject.addProperty("pendingAverageTime", toMicroseconds(src.pendingAverageTime()));
         String isoLocalDateTime = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(src.lastCall());
         jsonObject.addProperty("lastCall", isoLocalDateTime);
-        System.out.println(jsonObject);
         return jsonObject;
     }
 }

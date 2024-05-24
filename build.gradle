@@ -28,7 +28,7 @@ sonar {
 
 test {
     finalizedBy jacocoTestReport
-    jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED', '--add-opens=java.base/java.util=ALL-UNNAMED, --add-opens=java.base/java.time=ALL-UNNAMED'
+    jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED', '--add-opens=java.base/java.util=ALL-UNNAMED'
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"

@@ -1,6 +1,7 @@
 package se.laz.casual;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import se.laz.casual.api.util.time.InstantUtil;
 import se.laz.casual.statistics.ServiceCall;
@@ -12,7 +13,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
 
 @QuarkusTest
 class StatisticsResourceTest
@@ -49,8 +52,16 @@ class StatisticsResourceTest
                 .when().get("/statistics/all")
                 .then()
                 .statusCode(200)
-                .contentType("application/json")
-                .body(contains("fast-service"));
+                .contentType(ContentType.JSON)
+                .body("size()", is(2))
+                .body("connection.connectionName", hasItems("asdf", "bazinga"))
+                .body("entries.flatten {it.serviceCall}.serviceName", hasItems("fast-service", "slow-service"))
+                .body("entries.flatten{it.accumulatedData}.numberOfServiceCalls", everyItem(is(1)))
+                .body("entries.flatten{it.accumulatedData}.averageTime", everyItem(is(8500)))
+                .body("entries.flatten{it.accumulatedData}.minTime", everyItem(is(8500)))
+                .body("entries.flatten{it.accumulatedData}.maxTime", everyItem(is(8500)))
+                .body("entries.flatten{it.accumulatedData}.numberOfPending", everyItem(is(1)))
+                .body("entries.flatten{it.accumulatedData}.pendingAverageTime", everyItem(is(2750)));
     }
 
 }
