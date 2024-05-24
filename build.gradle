@@ -28,7 +28,7 @@ sonar {
 
 test {
     finalizedBy jacocoTestReport
-    jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED', '--add-opens=java.base/java.util=ALL-UNNAMED'
+    jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED', '--add-opens=java.base/java.util=ALL-UNNAMED, --add-opens=java.base/java.time=ALL-UNNAMED'
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
@@ -46,6 +46,7 @@ jacocoTestReport {
 rootProject.tasks['sonar'].dependsOn.add(subprojects.tasks['test'])
 
 dependencies {
+    implementation 'io.quarkus:quarkus-rest-jackson'
     implementation 'io.quarkus:quarkus-netty'
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-rest'

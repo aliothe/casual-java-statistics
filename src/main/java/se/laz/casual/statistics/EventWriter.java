@@ -1,7 +1,8 @@
 package se.laz.casual.statistics;
 
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.BooleanSupplier;
 
 public record EventWriter(AugmentedEventStore eventStore, StoreFunction storeFunction, BooleanSupplier condition)
@@ -11,7 +12,8 @@ public record EventWriter(AugmentedEventStore eventStore, StoreFunction storeFun
         Objects.requireNonNull(eventStore, "eventStore can not be null");
         Objects.requireNonNull(storeFunction, "storeFunction can not be null");
         Objects.requireNonNull(condition, "condition can not be null");
-        CompletableFuture.runAsync(this::waitForMessageAndStore);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(this::waitForMessageAndStore);
     }
     private void waitForMessageAndStore()
     {

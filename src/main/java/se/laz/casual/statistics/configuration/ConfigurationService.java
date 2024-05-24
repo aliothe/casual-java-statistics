@@ -27,13 +27,21 @@ public class ConfigurationService
         {
             throw new RuntimeException(ENV_VAR_NAME + " is not set");
         }
+        return doGetConfiguration(configurationFile);
+    }
+    public Configuration getConfiguration(String filename)
+    {
+        return doGetConfiguration(filename);
+    }
+    private Configuration doGetConfiguration(String filename)
+    {
         try
         {
-            return JsonProviderFactory.getJsonProvider().fromJson(new FileReader(configurationFile, StandardCharsets.UTF_8), Configuration.class);
+            return JsonProviderFactory.getJsonProvider().fromJson(new FileReader(filename, StandardCharsets.UTF_8), Configuration.class);
         }
         catch (FileNotFoundException e)
         {
-            throw new RuntimeException(e);
+            throw new RuntimeException("could not find configuration file: " + filename, e);
         }
         catch (IOException e)
         {
