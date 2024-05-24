@@ -49,7 +49,7 @@ class StatisticsResourceTest
         ServiceCallStatistics.store(connection, serviceCallTwo, data);
         ServiceCallStatistics.store(connectionTwo, serviceCall, data);
         given()
-                .when().get("/statistics/all")
+                .when().get("/statistics")
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)

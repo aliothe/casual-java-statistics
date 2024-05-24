@@ -33,7 +33,7 @@ class ServiceCallStatisticsTest extends Specification {
 
    def 'fetch, wrong usage'() {
       when:
-      ServiceCallStatistics.fetch(connection, serviceCall)
+      ServiceCallStatistics.get(connection, serviceCall)
       then:
       thrown(NullPointerException)
       where:
@@ -42,7 +42,7 @@ class ServiceCallStatisticsTest extends Specification {
       sharedServiceCallConnection || null
    }
 
-   def 'store, fetch, accumulate, fetch'()
+   def 'store, get, accumulate, get'()
    {
       given:
       def start = 0
@@ -74,7 +74,7 @@ class ServiceCallStatisticsTest extends Specification {
 
       when:
       ServiceCallStatistics.store(sharedServiceCallConnection, sharedServiceCall, initialData)
-      ServiceCallAccumulatedData accumulatedData = ServiceCallStatistics.fetch(sharedServiceCallConnection, sharedServiceCall).orElseThrow {new CasualRuntimeException("missing entry")}
+      ServiceCallAccumulatedData accumulatedData = ServiceCallStatistics.get(sharedServiceCallConnection, sharedServiceCall).orElseThrow {new CasualRuntimeException("missing entry")}
       then:
       accumulatedData.numberOfPending() == 0
       accumulatedData.pendingAverageTime() == Duration.ZERO
@@ -84,7 +84,7 @@ class ServiceCallStatisticsTest extends Specification {
       accumulatedData.averageTime() == initialDuration
       when:
       ServiceCallStatistics.store(sharedServiceCallConnection, sharedServiceCall, secondCallData)
-      accumulatedData = ServiceCallStatistics.fetch(sharedServiceCallConnection, sharedServiceCall).orElseThrow {new CasualRuntimeException("missing entry")}
+      accumulatedData = ServiceCallStatistics.get(sharedServiceCallConnection, sharedServiceCall).orElseThrow {new CasualRuntimeException("missing entry")}
       then:
       accumulatedData.numberOfPending() == 1
       accumulatedData.pendingAverageTime() == initialPendingDuration
@@ -94,7 +94,7 @@ class ServiceCallStatisticsTest extends Specification {
       accumulatedData.averageTime() == initialDuration.plus(secondDuration).dividedBy(2)
       when:
       ServiceCallStatistics.store(sharedServiceCallConnection, sharedServiceCall, thirdCallData)
-      accumulatedData = ServiceCallStatistics.fetch(sharedServiceCallConnection, sharedServiceCall).orElseThrow {new CasualRuntimeException("missing entry")}
+      accumulatedData = ServiceCallStatistics.get(sharedServiceCallConnection, sharedServiceCall).orElseThrow {new CasualRuntimeException("missing entry")}
       then:
       accumulatedData.numberOfPending() == 2
       accumulatedData.pendingAverageTime() == initialPendingDuration.plus(secondPendingDuration).dividedBy(2)
