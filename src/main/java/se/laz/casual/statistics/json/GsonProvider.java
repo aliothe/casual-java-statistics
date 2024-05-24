@@ -1,7 +1,8 @@
-package se.laz.casual.statistics;
+package se.laz.casual.statistics.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import se.laz.casual.statistics.ServiceCallAccumulatedData;
 
 public class GsonProvider
 {

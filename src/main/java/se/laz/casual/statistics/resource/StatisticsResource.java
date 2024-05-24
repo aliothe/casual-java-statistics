@@ -5,7 +5,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import se.laz.casual.statistics.GsonProvider;
+import se.laz.casual.statistics.json.GsonProvider;
 import se.laz.casual.statistics.ServiceCallStatistics;
 
 import java.util.logging.Level;

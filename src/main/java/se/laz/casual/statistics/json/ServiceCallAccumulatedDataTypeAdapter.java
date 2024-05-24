@@ -1,10 +1,11 @@
-package se.laz.casual.statistics;
+package se.laz.casual.statistics.json;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import se.laz.casual.statistics.ServiceCallAccumulatedData;
 
 import java.lang.reflect.Type;
 import java.time.format.DateTimeFormatter;
