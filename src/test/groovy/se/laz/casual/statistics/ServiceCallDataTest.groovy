@@ -9,7 +9,7 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 import static se.laz.casual.statistics.TimeConverter.toInstant
-import static se.laz.casual.statistics.TimeConverter.toMicroSeconds
+import static se.laz.casual.statistics.TimeConverter.toMicroseconds
 
 class ServiceCallDataTest extends Specification
 {
@@ -44,7 +44,7 @@ class ServiceCallDataTest extends Specification
    {
       given:
       Instant instantNow = Instant.now()
-      long start = toMicroSeconds(instantNow)
+      long start = toMicroseconds(instantNow)
       long callTime = 50000
       long pending = 100
       LocalDateTime lastCall = LocalDateTime.ofInstant(toInstant(start), ZoneId.systemDefault())

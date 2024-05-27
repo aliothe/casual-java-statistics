@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
-import static se.laz.casual.statistics.TimeConverter.toMicroSeconds
+import static se.laz.casual.statistics.TimeConverter.toMicroseconds
 import static se.laz.casual.statistics.TimeConverter.toInstant
 
 class ServiceCallAccumulatedDataTest extends Specification
@@ -20,7 +20,7 @@ class ServiceCallAccumulatedDataTest extends Specification
       def numberOfCalls = 1
       def numberOfPending = 1
       Instant instantNow = Instant.now()
-      long start = toMicroSeconds(instantNow)
+      long start = toMicroseconds(instantNow)
       LocalDateTime lastCall = LocalDateTime.ofInstant(toInstant(start), ZoneId.systemDefault())
       long initialCallTimeMicros =  1000
       long secondCallTimeMicros = 5000

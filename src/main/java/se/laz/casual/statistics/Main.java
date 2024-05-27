@@ -8,6 +8,7 @@ import se.laz.casual.statistics.configuration.ConfigurationService;
 import se.laz.casual.statistics.pool.ClientPool;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BooleanSupplier;
@@ -21,19 +22,17 @@ public class Main
     }
     public static class StatisticsApp implements QuarkusApplication, BooleanSupplier
     {
-        private ClientPool pool;
-        private EventWriter eventWriter;
         private boolean keepRunning = true;
-        private ScheduledExecutorService scheduledExecutorService;
-
         @Override
         public int run(String... args)
         {
             UUID domainId = UUID.randomUUID();
-            this.eventWriter = new EventWriter(AugmentedEventStoreFactory.getStore(domainId), ServiceCallStatistics::store, this);
-            this.scheduledExecutorService = Executors.newScheduledThreadPool(4);
-            Configuration configuration = ConfigurationService.getInstance().getConfiguration();
-            this.pool = ClientPool.of(configuration, 30_000L, scheduledExecutorService::schedule, domainId);
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            EventWriter eventWriter = new EventWriter(AugmentedEventStoreFactory.getStore(domainId), ServiceCallStatistics::store, this);
+            executorService.submit(eventWriter::waitForMessageAndStore);
+            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+            Configuration configuration = ConfigurationService.of().getConfiguration();
+            ClientPool pool = ClientPool.of(configuration, 30_000L, scheduledExecutorService::schedule, domainId);
             pool.connect();
             Quarkus.waitForExit();
             return 0;

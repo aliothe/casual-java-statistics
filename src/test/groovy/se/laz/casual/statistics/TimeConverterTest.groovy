@@ -6,7 +6,7 @@ import spock.lang.Specification
 import java.time.Instant
 
 import static se.laz.casual.statistics.TimeConverter.toInstant
-import static se.laz.casual.statistics.TimeConverter.toMicroSeconds
+import static se.laz.casual.statistics.TimeConverter.toMicroseconds
 
 class TimeConverterTest extends Specification
 {
@@ -19,7 +19,7 @@ class TimeConverterTest extends Specification
       then:
       instant.toEpochMilli() == microseconds / 1000
       when:
-      long fromInstant = toMicroSeconds(instant)
+      long fromInstant = toMicroseconds(instant)
       then:
       microseconds == fromInstant
    }

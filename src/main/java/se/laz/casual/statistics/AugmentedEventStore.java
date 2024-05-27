@@ -23,7 +23,7 @@ public record AugmentedEventStore(BlockingDeque<AugmentedEvent> events)
         catch (InterruptedException e)
         {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("AugmentedEventStore::takeFirst interrupted");
+            throw new AugmentedEventStoreInterruptedException("AugmentedEventStore::takeFirst interrupted", e);
         }
     }
 }

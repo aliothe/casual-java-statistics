@@ -48,7 +48,7 @@ public class ClientPool implements ClientListener
         Supplier<Client> clientSupplier = () -> {
             Client client = Client.of(host, this, eventStore);
             client.connect();
-            LOG.finest("Connected to " + host);
+            LOG.finest(() ->"Connected to " + host);
             return client;
         };
         Consumer<Client> clientConsumer = clients::add;
@@ -57,7 +57,7 @@ public class ClientPool implements ClientListener
     @Override
     public void disconnected(Client client)
     {
-        LOG.finest("Disconnected from " + client);
+        LOG.finest(() ->"Disconnected from " + client);
         clients.removeIf(instance -> Objects.equals(instance, client));
         connect(client.getHost());
     }

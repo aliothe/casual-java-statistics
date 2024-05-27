@@ -16,7 +16,7 @@ class ConfigurationServiceTest extends Specification
       Configuration actual
       withEnvironmentVariable( ConfigurationService.ENV_VAR_NAME, "src/test/resources/" + file )
                 .execute( {
-                   instance = new ConfigurationService()
+                   instance = ConfigurationService.of()
                    actual = instance.getConfiguration()
                 })
       then:
