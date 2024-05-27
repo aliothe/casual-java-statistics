@@ -4,6 +4,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import se.laz.casual.api.util.time.InstantUtil;
+import se.laz.casual.event.Order;
 import se.laz.casual.statistics.ServiceCall;
 import se.laz.casual.statistics.ServiceCallConnection;
 import se.laz.casual.statistics.ServiceCallData;
@@ -38,13 +39,13 @@ class StatisticsResourceTest
         LocalDateTime end = start.plusNanos(callTimeMicroseconds * 1000);
         ServiceCallConnection connection = new ServiceCallConnection("asdf");
         ServiceCallConnection connectionTwo = new ServiceCallConnection("bazinga");
-        ServiceCall serviceCall = new ServiceCall("fast-service");
+        ServiceCall serviceCall = new ServiceCall("fast-service", Order.CONCURRENT);
         ServiceCallData data = ServiceCallData.newBuilder()
                                               .withStart(InstantUtil.toEpochMicro(start.toInstant(ZoneOffset.UTC)))
                                               .withEnd(InstantUtil.toEpochMicro(end.toInstant(ZoneOffset.UTC)))
                                               .withPending(pendingTimeMicroseconds)
                                               .build();
-        ServiceCall serviceCallTwo = new ServiceCall("slow-service");
+        ServiceCall serviceCallTwo = new ServiceCall("slow-service", Order.CONCURRENT);
         ServiceCallStatistics.store(connection, serviceCall, data);
         ServiceCallStatistics.store(connection, serviceCallTwo, data);
         ServiceCallStatistics.store(connectionTwo, serviceCall, data);

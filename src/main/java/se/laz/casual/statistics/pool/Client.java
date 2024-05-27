@@ -1,5 +1,6 @@
 package se.laz.casual.statistics.pool;
 
+import se.laz.casual.event.Order;
 import se.laz.casual.event.ServiceCallEvent;
 import se.laz.casual.event.client.ConnectionObserver;
 import se.laz.casual.event.client.EventClient;
@@ -50,7 +51,7 @@ public class Client implements EventObserver, ConnectionObserver
     public void notify(ServiceCallEvent event)
     {
         ServiceCallConnection connection = new ServiceCallConnection(host.connectionName());
-        ServiceCall serviceCall = new ServiceCall(event.getService());
+        ServiceCall serviceCall = new ServiceCall(event.getService(), Order.unmarshall(event.getOrder()));
         ServiceCallData data = ServiceCallData.newBuilder()
                                               .withStart(event.getStart())
                                               .withEnd(event.getEnd())

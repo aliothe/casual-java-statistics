@@ -1,17 +1,19 @@
 package se.laz.casual.statistics
 
 import se.laz.casual.api.CasualRuntimeException
+import se.laz.casual.event.Order
 import spock.lang.Shared
 import spock.lang.Specification
 
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
-class ServiceCallStatisticsTest extends Specification {
+class ServiceCallStatisticsTest extends Specification
+{
    @Shared
    ServiceCallConnection sharedServiceCallConnection = new ServiceCallConnection('a very fast connection, also blue')
    @Shared
-   ServiceCall sharedServiceCall = new ServiceCall('a really nice service')
+   ServiceCall sharedServiceCall = new ServiceCall('a really nice service', Order.SEQUENTIAL)
    @Shared
    ServiceCallData sharedServiceCallData = ServiceCallData.newBuilder()
            .withPending(42)
