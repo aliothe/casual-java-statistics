@@ -4,6 +4,7 @@ import se.laz.casual.statistics.entries.EntriesPerConnection;
 import se.laz.casual.statistics.entries.Entry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,27 +38,18 @@ public class ServiceCallStatistics
         Objects.requireNonNull(connection, CONNECTION_CAN_NOT_BE_NULL);
         Objects.requireNonNull(serviceCall, SERVICE_CALL_CAN_NOT_BE_NULL);
         Map<ServiceCall, ServiceCallAccumulatedData> accumulatedDataByServiceCall = DATA.get(connection);
-        if(null == accumulatedDataByServiceCall)
-        {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(accumulatedDataByServiceCall.get(serviceCall));
+        return null == accumulatedDataByServiceCall ? Optional.empty() :Optional.ofNullable(accumulatedDataByServiceCall.get(serviceCall));
     }
     public static List<EntriesPerConnection> get(ServiceCallConnection connection)
     {
         Objects.requireNonNull(connection, CONNECTION_CAN_NOT_BE_NULL);
-        List<EntriesPerConnection> result = new ArrayList<>();
         List<Entry> entries = Optional.ofNullable(DATA.get(connection))
                                       .orElseGet(() -> EMPTY_MAP)
                                       .entrySet()
                                       .stream()
                                       .map(item -> new Entry(item.getKey(), item.getValue()))
                                       .toList();
-        if(!entries.isEmpty())
-        {
-            result.add(new EntriesPerConnection(connection, entries));
-        }
-        return result;
+        return entries.isEmpty() ? Collections.emptyList() : List.of(new EntriesPerConnection(connection, entries));
     }
     public static List<EntriesPerConnection> getAll()
     {
