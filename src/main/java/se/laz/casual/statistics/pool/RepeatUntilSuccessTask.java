@@ -32,7 +32,7 @@ public record RepeatUntilSuccessTask<T>(Supplier<T> supplier, Consumer<T> consum
         }
         catch(Exception e)
         {
-            LOG.log(Level.WARNING, e, () -> "failed running task - will reschedule");
+            LOG.log(Level.WARNING, e, () -> "failed - will reschedule");
             schedule();
         }
     }
