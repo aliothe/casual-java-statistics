@@ -51,8 +51,8 @@ class StatisticsResourceTest
         ServiceCallStatistics.store(connection, serviceCall, data);
         ServiceCallStatistics.store(connection, serviceCallTwo, data);
         ServiceCallStatistics.store(connectionTwo, serviceCall, data);
-        float expectedCallTimeInSeconds = (float)TimeConverter.roundUpWithPrecision(8500 / TimeConverter.MICROSECONDS_TO_SECONDS_FACTOR, precision);
-        float expectedPendingTimeInSeconds = (float)TimeConverter.roundUpWithPrecision(2750 / TimeConverter.MICROSECONDS_TO_SECONDS_FACTOR, precision);
+        float expectedCallTimeInSeconds = TimeConverter.roundUpWithPrecision(8500 / TimeConverter.MICROSECONDS_TO_SECONDS_FACTOR, precision);
+        float expectedPendingTimeInSeconds = TimeConverter.roundUpWithPrecision(2750 / TimeConverter.MICROSECONDS_TO_SECONDS_FACTOR, precision);
         given()
                 .when().get("/statistics")
                 .then()
