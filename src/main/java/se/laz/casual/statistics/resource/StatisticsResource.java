@@ -45,7 +45,7 @@ public class StatisticsResource
         }
         catch(Exception e)
         {
-            LOG.log(Level.WARNING, e, () -> "Failed to get all statistics");
+            LOG.log(Level.WARNING, e, () -> "Failed to get statistics for connection " + connection);
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
