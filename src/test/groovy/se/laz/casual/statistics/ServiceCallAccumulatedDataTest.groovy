@@ -1,5 +1,10 @@
-package se.laz.casual.statistics
+/*
+ * Copyright (c) 2024, The casual project. All rights reserved.
+ *
+ * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
+ */
 
+package se.laz.casual.statistics
 
 import spock.lang.Specification
 
@@ -9,8 +14,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
-import static se.laz.casual.statistics.TimeConverter.toMicroseconds
 import static se.laz.casual.statistics.TimeConverter.toInstant
+import static se.laz.casual.statistics.TimeConverter.toMicroseconds
 
 class ServiceCallAccumulatedDataTest extends Specification
 {
