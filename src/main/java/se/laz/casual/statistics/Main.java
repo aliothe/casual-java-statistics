@@ -27,14 +27,16 @@ public class Main
         public int run(String... args)
         {
             UUID domainId = UUID.randomUUID();
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
-            EventWriter eventWriter = new EventWriter(AugmentedEventStoreFactory.getStore(domainId), ServiceCallStatistics::store, this);
-            executorService.submit(eventWriter::waitForMessageAndStore);
-            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2);
-            Configuration configuration = ConfigurationService.of().getConfiguration();
-            ClientPool pool = ClientPool.of(configuration, 30_000L, scheduledExecutorService::schedule, domainId);
-            pool.connect();
-            Quarkus.waitForExit();
+            try(ExecutorService executorService = Executors.newSingleThreadExecutor();
+                ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2);)
+            {
+                EventWriter eventWriter = new EventWriter(AugmentedEventStoreFactory.getStore(domainId), ServiceCallStatistics::store, this);
+                executorService.submit(eventWriter::waitForMessageAndStore);
+                Configuration configuration = ConfigurationService.of().getConfiguration();
+                ClientPool pool = ClientPool.of(configuration, 30_000L, scheduledExecutorService::schedule, domainId);
+                pool.connect();
+                Quarkus.waitForExit();
+            }
             return 0;
         }
 
