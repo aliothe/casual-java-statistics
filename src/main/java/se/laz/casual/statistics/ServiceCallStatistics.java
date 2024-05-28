@@ -65,8 +65,7 @@ public class ServiceCallStatistics
     {
         List<EntriesPerConnection> result = new ArrayList<>();
         DATA.keySet().forEach(item -> {
-            List<EntriesPerConnection> items = get(item);
-            result.addAll(items);
+            result.addAll(get(item));
         });
         return result;
     }

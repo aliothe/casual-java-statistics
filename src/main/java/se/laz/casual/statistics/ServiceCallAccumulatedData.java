@@ -8,10 +8,10 @@ public record ServiceCallAccumulatedData(long numberOfServiceCalls, Duration tot
 {
     public ServiceCallAccumulatedData
     {
-        Objects.requireNonNull(totalTime, "average time cannot be null");
+        Objects.requireNonNull(totalTime, "total time cannot be null");
         Objects.requireNonNull(minTime, "min time cannot be null");
         Objects.requireNonNull(maxTime, "max time cannot be null");
-        Objects.requireNonNull(totalPendingTime, "pending average time cannot be null");
+        Objects.requireNonNull(totalPendingTime, "total pending time cannot be null");
         Objects.requireNonNull(lastCall, "last call cannot be null");
     }
 

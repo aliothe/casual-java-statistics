@@ -9,6 +9,7 @@ import se.laz.casual.statistics.ServiceCall;
 import se.laz.casual.statistics.ServiceCallConnection;
 import se.laz.casual.statistics.ServiceCallData;
 import se.laz.casual.statistics.ServiceCallStatistics;
+import se.laz.casual.statistics.TimeConverter;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -35,6 +36,7 @@ class StatisticsResourceTest
     {
         long callTimeMicroseconds = 8500;
         long pendingTimeMicroseconds = 2750;
+        int precision = 3;
         LocalDateTime start = LocalDateTime.now();
         LocalDateTime end = start.plusNanos(callTimeMicroseconds * 1000);
         ServiceCallConnection connection = new ServiceCallConnection("asdf");
@@ -49,6 +51,8 @@ class StatisticsResourceTest
         ServiceCallStatistics.store(connection, serviceCall, data);
         ServiceCallStatistics.store(connection, serviceCallTwo, data);
         ServiceCallStatistics.store(connectionTwo, serviceCall, data);
+        float expectedCallTimeInSeconds = (float)TimeConverter.roundUpWithPrecision(8500 / TimeConverter.MICROSECONDS_TO_SECONDS_FACTOR, precision);
+        float expectedPendingTimeInSeconds = (float)TimeConverter.roundUpWithPrecision(2750 / TimeConverter.MICROSECONDS_TO_SECONDS_FACTOR, precision);
         given()
                 .when().get("/statistics")
                 .then()
@@ -58,11 +62,11 @@ class StatisticsResourceTest
                 .body("connection.connectionName", hasItems("asdf", "bazinga"))
                 .body("entries.flatten {it.serviceCall}.serviceName", hasItems("fast-service", "slow-service"))
                 .body("entries.flatten{it.accumulatedData}.numberOfServiceCalls", everyItem(is(1)))
-                .body("entries.flatten{it.accumulatedData}.averageTime", everyItem(is(8500)))
-                .body("entries.flatten{it.accumulatedData}.minTime", everyItem(is(8500)))
-                .body("entries.flatten{it.accumulatedData}.maxTime", everyItem(is(8500)))
+                .body("entries.flatten{it.accumulatedData}.averageTime", everyItem(is(expectedCallTimeInSeconds)))
+                .body("entries.flatten{it.accumulatedData}.minTime", everyItem(is(expectedCallTimeInSeconds)))
+                .body("entries.flatten{it.accumulatedData}.maxTime", everyItem(is(expectedCallTimeInSeconds)))
                 .body("entries.flatten{it.accumulatedData}.numberOfPending", everyItem(is(1)))
-                .body("entries.flatten{it.accumulatedData}.pendingAverageTime", everyItem(is(2750)));
+                .body("entries.flatten{it.accumulatedData}.pendingAverageTime", everyItem(is(expectedPendingTimeInSeconds)));
     }
 
 }

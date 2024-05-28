@@ -10,7 +10,7 @@ import se.laz.casual.statistics.ServiceCallAccumulatedData;
 import java.lang.reflect.Type;
 import java.time.format.DateTimeFormatter;
 
-import static se.laz.casual.statistics.TimeConverter.toMicroseconds;
+import static se.laz.casual.statistics.TimeConverter.toSecondsWithPrecision;
 
 public class ServiceCallAccumulatedDataTypeAdapter implements JsonSerializer<ServiceCallAccumulatedData>
 {
@@ -21,13 +21,14 @@ public class ServiceCallAccumulatedDataTypeAdapter implements JsonSerializer<Ser
         {
             return JsonNull.INSTANCE;
         }
+        final int precision = 3;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("numberOfServiceCalls", src.numberOfServiceCalls());
-        jsonObject.addProperty("averageTime", toMicroseconds(src.averageTime()));
-        jsonObject.addProperty("minTime", toMicroseconds(src.minTime()));
-        jsonObject.addProperty("maxTime", toMicroseconds(src.maxTime()));
+        jsonObject.addProperty("averageTime", toSecondsWithPrecision(src.averageTime(), precision));
+        jsonObject.addProperty("minTime", toSecondsWithPrecision(src.minTime(), precision));
+        jsonObject.addProperty("maxTime", toSecondsWithPrecision(src.maxTime(), precision));
         jsonObject.addProperty("numberOfPending", src.numberOfPending());
-        jsonObject.addProperty("pendingAverageTime", toMicroseconds(src.averagePendingTime()));
+        jsonObject.addProperty("pendingAverageTime", toSecondsWithPrecision(src.averagePendingTime(), precision));
         String isoLocalDateTime = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(src.lastCall());
         jsonObject.addProperty("lastCall", isoLocalDateTime);
         return jsonObject;
