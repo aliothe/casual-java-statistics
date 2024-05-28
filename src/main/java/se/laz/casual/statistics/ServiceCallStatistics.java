@@ -47,13 +47,12 @@ public class ServiceCallStatistics
     {
         Objects.requireNonNull(connection, CONNECTION_CAN_NOT_BE_NULL);
         List<EntriesPerConnection> result = new ArrayList<>();
-        List<Entry> entries = new ArrayList<>();
-        entries.addAll(Optional.ofNullable(DATA.get(connection))
-                               .orElseGet(() -> EMPTY_MAP)
-                               .entrySet()
-                               .stream()
-                               .map(item -> new Entry(item.getKey(), item.getValue()))
-                               .toList());
+        List<Entry> entries = Optional.ofNullable(DATA.get(connection))
+                                      .orElseGet(() -> EMPTY_MAP)
+                                      .entrySet()
+                                      .stream()
+                                      .map(item -> new Entry(item.getKey(), item.getValue()))
+                                      .toList();
         if(!entries.isEmpty())
         {
             result.add(new EntriesPerConnection(connection, entries));
