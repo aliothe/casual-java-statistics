@@ -11,8 +11,6 @@ public class GsonProvider
     {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(ServiceCallAccumulatedData.class, new ServiceCallAccumulatedDataTypeAdapter());
-        // enableComplexMapKeySerialization()
-        //        .setPrettyPrinting()
         GSON = builder.enableComplexMapKeySerialization().setPrettyPrinting().create();
     }
     private GsonProvider()

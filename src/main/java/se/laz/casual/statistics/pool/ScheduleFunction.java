@@ -3,6 +3,7 @@ package se.laz.casual.statistics.pool;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+@FunctionalInterface
 public interface ScheduleFunction
 {
     // sonar

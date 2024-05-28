@@ -50,10 +50,10 @@ public class ServiceCallStatistics
         Map<ServiceCall, ServiceCallAccumulatedData> calls = DATA.get(connection);
         if(null != calls)
         {
-            for (var entry : calls.entrySet())
-            {
-                entries.add(new Entry(entry.getKey(), entry.getValue()));
-            }
+            entries.addAll(calls.entrySet()
+                                .stream()
+                                .map(item -> new Entry(item.getKey(), item.getValue()))
+                                .toList());
         }
         if(!entries.isEmpty())
         {

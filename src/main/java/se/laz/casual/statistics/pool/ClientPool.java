@@ -17,9 +17,9 @@ public class ClientPool implements ClientListener
 {
     private static final Logger LOG = Logger.getLogger(ClientPool.class.getName());
     private final List<Client> clients = new ArrayList<>();
-    private UUID domainId;
-    private Configuration configuration;
-    private ScheduleFunction scheduleFunction;
+    private final UUID domainId;
+    private final Configuration configuration;
+    private final ScheduleFunction scheduleFunction;
     long maxBackoffMilliseconds;
     private ClientPool(Configuration config, long maxBackoffMilliseconds, ScheduleFunction scheduleFunction, UUID domainId)
     {
