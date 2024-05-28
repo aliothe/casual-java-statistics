@@ -14,6 +14,7 @@ public class ServiceCallStatistics
 {
     private static final String CONNECTION_CAN_NOT_BE_NULL = "connection can not be null";
     private static final String SERVICE_CALL_CAN_NOT_BE_NULL = "serviceCall can not be null";
+    private static final Map<ServiceCall, ServiceCallAccumulatedData> EMPTY_MAP = new ConcurrentHashMap<>();
     private static final Map<ServiceCallConnection, Map<ServiceCall, ServiceCallAccumulatedData>> DATA = new ConcurrentHashMap<>();
     private ServiceCallStatistics()
     {}
@@ -47,14 +48,12 @@ public class ServiceCallStatistics
         Objects.requireNonNull(connection, CONNECTION_CAN_NOT_BE_NULL);
         List<EntriesPerConnection> result = new ArrayList<>();
         List<Entry> entries = new ArrayList<>();
-        Map<ServiceCall, ServiceCallAccumulatedData> calls = DATA.get(connection);
-        if(null != calls)
-        {
-            entries.addAll(calls.entrySet()
-                                .stream()
-                                .map(item -> new Entry(item.getKey(), item.getValue()))
-                                .toList());
-        }
+        entries.addAll(Optional.ofNullable(DATA.get(connection))
+                               .orElseGet(() -> EMPTY_MAP)
+                               .entrySet()
+                               .stream()
+                               .map(item -> new Entry(item.getKey(), item.getValue()))
+                               .toList());
         if(!entries.isEmpty())
         {
             result.add(new EntriesPerConnection(connection, entries));
@@ -69,5 +68,4 @@ public class ServiceCallStatistics
         });
         return result;
     }
-
 }
