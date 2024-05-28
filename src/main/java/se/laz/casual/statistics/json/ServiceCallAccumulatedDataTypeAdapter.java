@@ -27,7 +27,7 @@ public class ServiceCallAccumulatedDataTypeAdapter implements JsonSerializer<Ser
         jsonObject.addProperty("minTime", toMicroseconds(src.minTime()));
         jsonObject.addProperty("maxTime", toMicroseconds(src.maxTime()));
         jsonObject.addProperty("numberOfPending", src.numberOfPending());
-        jsonObject.addProperty("pendingAverageTime", toMicroseconds(src.pendingAverageTime()));
+        jsonObject.addProperty("pendingAverageTime", toMicroseconds(src.averagePendingTime()));
         String isoLocalDateTime = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(src.lastCall());
         jsonObject.addProperty("lastCall", isoLocalDateTime);
         return jsonObject;

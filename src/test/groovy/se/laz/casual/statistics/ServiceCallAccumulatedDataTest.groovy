@@ -55,8 +55,9 @@ class ServiceCallAccumulatedDataTest extends Specification
       accumulatedData.minTime() == initialCallTime
       accumulatedData.maxTime() == initialCallTime
       accumulatedData.averageTime() == initialCallTime
+      accumulatedData.totalTime() == initialCallTime
       accumulatedData.numberOfPending() == numberOfPending
-      accumulatedData.pendingAverageTime() == initialPendingTime
+      accumulatedData.totalPendingTime() == initialPendingTime
       accumulatedData.lastCall() == lastCall
       when: // add call but no pending
       accumulatedData = accumulatedData.accumulate(noPendingData)
@@ -64,9 +65,11 @@ class ServiceCallAccumulatedDataTest extends Specification
       accumulatedData.numberOfServiceCalls() == ++numberOfCalls
       accumulatedData.minTime() == initialCallTime
       accumulatedData.maxTime() == secondCallTime
-      accumulatedData.averageTime() == initialCallTime.plus(secondCallTime).dividedBy(numberOfCalls)
+      accumulatedData.averageTime() == (initialCallTime + secondCallTime).dividedBy(numberOfCalls)
+      accumulatedData.totalTime() == initialCallTime + secondCallTime
       accumulatedData.numberOfPending() == numberOfPending
-      accumulatedData.pendingAverageTime() == initialPendingTime
+      accumulatedData.totalPendingTime() == initialPendingTime
+      accumulatedData.averagePendingTime() == initialPendingTime
       accumulatedData.lastCall() == lastCall
       when: // add call with pending
       accumulatedData = accumulatedData.accumulate(moreDataWithPending)
@@ -74,9 +77,11 @@ class ServiceCallAccumulatedDataTest extends Specification
       accumulatedData.numberOfServiceCalls() == ++numberOfCalls
       accumulatedData.minTime() == initialCallTime
       accumulatedData.maxTime() == thirdCallTime
-      accumulatedData.averageTime() == initialCallTime.plus(secondCallTime).plus(thirdCallTime).dividedBy(numberOfCalls)
+      accumulatedData.averageTime() == (initialCallTime + secondCallTime + thirdCallTime).dividedBy(numberOfCalls)
+      accumulatedData.totalTime() == initialCallTime + secondCallTime + thirdCallTime
       accumulatedData.numberOfPending() == ++numberOfPending
-      accumulatedData.pendingAverageTime() == initialPendingTime.plus(secondPendingTime).dividedBy( numberOfPending)
+      accumulatedData.totalPendingTime() == initialPendingTime + secondPendingTime
+      accumulatedData.averagePendingTime() == (initialPendingTime + secondPendingTime).dividedBy(numberOfPending)
       accumulatedData.lastCall() == lastCall
    }
 }

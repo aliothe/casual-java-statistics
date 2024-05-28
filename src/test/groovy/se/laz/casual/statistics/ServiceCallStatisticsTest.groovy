@@ -53,6 +53,8 @@ class ServiceCallStatisticsTest extends Specification
       def thirdEnd = end * 2
       def initialPending = 10_000
       def secondPending = 5_000
+      def numberOfServiceCalls = 0
+      def numberOfPending = 0
       Duration initialDuration = Duration.of(end, ChronoUnit.MICROS)
       Duration initialPendingDuration = Duration.of(initialPending, ChronoUnit.MICROS)
       Duration secondPendingDuration = Duration.of(secondPending, ChronoUnit.MICROS)
@@ -78,32 +80,37 @@ class ServiceCallStatisticsTest extends Specification
       ServiceCallStatistics.store(sharedServiceCallConnection, sharedServiceCall, initialData)
       ServiceCallAccumulatedData accumulatedData = ServiceCallStatistics.get(sharedServiceCallConnection, sharedServiceCall).orElseThrow {new CasualRuntimeException("missing entry")}
       then:
-      accumulatedData.numberOfPending() == 0
-      accumulatedData.pendingAverageTime() == Duration.ZERO
-      accumulatedData.numberOfServiceCalls() == 1
+      accumulatedData.numberOfPending() == numberOfPending
+      accumulatedData.totalPendingTime() == Duration.ZERO
+      accumulatedData.numberOfServiceCalls() == ++numberOfServiceCalls
       accumulatedData.minTime() == initialDuration
       accumulatedData.maxTime() == initialDuration
-      accumulatedData.averageTime() == initialDuration
+      accumulatedData.totalTime() == initialDuration
+      accumulatedData.averageTime() == accumulatedData.totalTime().dividedBy(numberOfServiceCalls)
       when:
       ServiceCallStatistics.store(sharedServiceCallConnection, sharedServiceCall, secondCallData)
       accumulatedData = ServiceCallStatistics.get(sharedServiceCallConnection, sharedServiceCall).orElseThrow {new CasualRuntimeException("missing entry")}
       then:
-      accumulatedData.numberOfPending() == 1
-      accumulatedData.pendingAverageTime() == initialPendingDuration
-      accumulatedData.numberOfServiceCalls() == 2
+      accumulatedData.numberOfPending() == ++numberOfPending
+      accumulatedData.totalPendingTime() == initialPendingDuration
+      accumulatedData.averagePendingTime() == accumulatedData.totalPendingTime().dividedBy(numberOfPending)
+      accumulatedData.numberOfServiceCalls() == ++numberOfServiceCalls
       accumulatedData.minTime() == secondDuration
       accumulatedData.maxTime() == initialDuration
-      accumulatedData.averageTime() == initialDuration.plus(secondDuration).dividedBy(2)
+      accumulatedData.totalTime() == initialDuration + secondDuration
+      accumulatedData.averageTime() == accumulatedData.totalTime().dividedBy(numberOfServiceCalls)
       when:
       ServiceCallStatistics.store(sharedServiceCallConnection, sharedServiceCall, thirdCallData)
       accumulatedData = ServiceCallStatistics.get(sharedServiceCallConnection, sharedServiceCall).orElseThrow {new CasualRuntimeException("missing entry")}
       then:
-      accumulatedData.numberOfPending() == 2
-      accumulatedData.pendingAverageTime() == initialPendingDuration.plus(secondPendingDuration).dividedBy(2)
-      accumulatedData.numberOfServiceCalls() == 3
+      accumulatedData.numberOfPending() == ++numberOfPending
+      accumulatedData.totalPendingTime() == initialPendingDuration + secondPendingDuration
+      accumulatedData.averagePendingTime() == accumulatedData.totalPendingTime().dividedBy(numberOfPending)
+      accumulatedData.numberOfServiceCalls() == ++numberOfServiceCalls
       accumulatedData.minTime() == secondDuration
       accumulatedData.maxTime() == thirdDuration
-      accumulatedData.averageTime() == initialDuration.plus(secondDuration).plus(thirdDuration).dividedBy(3)
+      accumulatedData.totalTime() == initialDuration + secondDuration + thirdDuration
+      accumulatedData.averageTime() == accumulatedData.totalTime().dividedBy(numberOfServiceCalls)
    }
 
 
