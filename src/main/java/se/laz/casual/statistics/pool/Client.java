@@ -44,6 +44,7 @@ public class Client implements EventObserver, ConnectionObserver
         EventClient client = EventClientBuilder.createBuilder()
                                                .withHost(host.hostName())
                                                .withPort(host.portNumber())
+                                               .withEventLoopGroup(EventLoopGroupFactory.getInstance())
                                                .withConnectionObserver(this)
                                                .withEventObserver(this)
                                                .build();
