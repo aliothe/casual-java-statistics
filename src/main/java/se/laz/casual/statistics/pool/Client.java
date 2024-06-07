@@ -19,6 +19,7 @@ import se.laz.casual.statistics.ServiceCallConnection;
 import se.laz.casual.statistics.ServiceCallData;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class Client implements EventObserver, ConnectionObserver
 {
@@ -39,7 +40,7 @@ public class Client implements EventObserver, ConnectionObserver
         Objects.requireNonNull(eventStore, "eventStore can not be null");
         return new Client(host, clientListener, eventStore);
     }
-    public void connect()
+    public CompletableFuture<Boolean> connect()
     {
         EventClient client = EventClientBuilder.createBuilder()
                                                .withHost(host.hostName())
@@ -48,7 +49,7 @@ public class Client implements EventObserver, ConnectionObserver
                                                .withConnectionObserver(this)
                                                .withEventObserver(this)
                                                .build();
-        client.connect().join();
+        return client.connect();
     }
     public Host getHost()
     {

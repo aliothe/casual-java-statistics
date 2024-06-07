@@ -57,6 +57,7 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'com.google.code.gson:gson:2.10.1'
     testImplementation 'com.github.stefanbirkner:system-lambda:1.2.1'
+    testImplementation "se.laz.casual:casual-test:${casualVersion}"
     // spock
     testImplementation platform('org.apache.groovy:groovy-bom:4.0.5')
     testImplementation 'org.apache.groovy:groovy'

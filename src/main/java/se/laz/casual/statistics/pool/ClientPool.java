@@ -53,7 +53,7 @@ public class ClientPool implements ClientListener
         AugmentedEventStore eventStore = AugmentedEventStoreFactory.getStore(domainId);
         Supplier<Client> clientSupplier = () -> {
             Client client = Client.of(host, this, eventStore);
-            client.connect();
+            client.connect().join();
             LOG.info(() ->"Connected to " + host);
             return client;
         };
