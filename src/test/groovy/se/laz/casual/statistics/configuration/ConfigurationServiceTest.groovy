@@ -6,7 +6,8 @@
 
 package se.laz.casual.statistics.configuration
 
-import se.laz.casual.statistics.pool.Host
+
+import se.laz.casual.statistics.pool.Address
 import spock.lang.Specification
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable
@@ -16,7 +17,7 @@ class ConfigurationServiceTest extends Specification
    def 'host configuration from file'()
    {
       given:
-      Configuration expected = new Configuration(hosts)
+      Configuration expected = new Configuration(addresses)
       ConfigurationService instance
       when:
       Configuration actual
@@ -28,7 +29,7 @@ class ConfigurationServiceTest extends Specification
       then:
       actual == expected
       where:
-      file                || hosts
-      'host-config.json'  || [new Host('fast', 2134), new Host('slow', 556)]
+      file                || addresses
+      'config.json'  || [new Address('fast', 2134), new Address('slow', 556)]
    }
 }

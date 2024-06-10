@@ -1,5 +1,5 @@
 {
-    "hosts":[
+    "addresses":[
         {"hostName":"fast", "portNumber":2134},
         {"hostName":"slow", "portNumber":556}
     ]

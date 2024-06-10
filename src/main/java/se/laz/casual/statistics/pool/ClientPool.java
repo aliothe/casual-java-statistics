@@ -43,18 +43,18 @@ public class ClientPool implements ClientListener
     }
     public void connect()
     {
-        configuration.hosts().parallelStream().forEach(this::connect);
+        configuration.addresses().parallelStream().forEach(this::connect);
     }
 
-    private void connect(Host host)
+    private void connect(Address address)
     {
         Objects.requireNonNull(configuration, "configuration cannot be null");
         Objects.requireNonNull(scheduleFunction, "scheduleFunction cannot be null");
         AugmentedEventStore eventStore = AugmentedEventStoreFactory.getStore(domainId);
         Supplier<Client> clientSupplier = () -> {
-            Client client = Client.of(host, this, eventStore);
+            Client client = Client.of(address, this, eventStore);
             client.connect().join();
-            LOG.info(() ->"Connected to " + host);
+            LOG.info(() ->"Connected to " + address);
             return client;
         };
         Consumer<Client> clientConsumer = clients::add;

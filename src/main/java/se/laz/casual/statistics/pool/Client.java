@@ -6,6 +6,7 @@
 
 package se.laz.casual.statistics.pool;
 
+import io.netty.channel.socket.nio.NioSocketChannel;
 import se.laz.casual.event.Order;
 import se.laz.casual.event.ServiceCallEvent;
 import se.laz.casual.event.client.ConnectionObserver;
@@ -23,42 +24,43 @@ import java.util.concurrent.CompletableFuture;
 
 public class Client implements EventObserver, ConnectionObserver
 {
-    private final Host host;
+    private final Address address;
     private final ClientListener clientListener;
     private final AugmentedEventStore eventStore;
 
-    public Client(Host host, ClientListener clientListener, AugmentedEventStore eventStore)
+    public Client(Address address, ClientListener clientListener, AugmentedEventStore eventStore)
     {
-        this.host = host;
+        this.address = address;
         this.clientListener = clientListener;
         this.eventStore = eventStore;
     }
-    public static Client of(Host host, ClientListener clientListener, AugmentedEventStore eventStore)
+    public static Client of(Address address, ClientListener clientListener, AugmentedEventStore eventStore)
     {
-        Objects.requireNonNull(host, "host can not be null");
+        Objects.requireNonNull(address, "address can not be null");
         Objects.requireNonNull(clientListener, "clientListener can not be null");
         Objects.requireNonNull(eventStore, "eventStore can not be null");
-        return new Client(host, clientListener, eventStore);
+        return new Client(address, clientListener, eventStore);
     }
     public CompletableFuture<Boolean> connect()
     {
         EventClient client = EventClientBuilder.createBuilder()
-                                               .withHost(host.hostName())
-                                               .withPort(host.portNumber())
+                                               .withHost(address.hostName())
+                                               .withPort(address.portNumber())
                                                .withEventLoopGroup(EventLoopGroupFactory.getInstance())
+                                               .withChannel(NioSocketChannel.class)
                                                .withConnectionObserver(this)
                                                .withEventObserver(this)
                                                .build();
         return client.connect();
     }
-    public Host getHost()
+    public Address getHost()
     {
-        return host;
+        return address;
     }
     @Override
     public void notify(ServiceCallEvent event)
     {
-        ServiceCallConnection connection = new ServiceCallConnection(host.connectionName());
+        ServiceCallConnection connection = new ServiceCallConnection(address.connectionName());
         ServiceCall serviceCall = new ServiceCall(event.getService(), Order.unmarshall(event.getOrder()));
         ServiceCallData data = ServiceCallData.newBuilder()
                                               .withStart(event.getStart())
@@ -78,18 +80,18 @@ public class Client implements EventObserver, ConnectionObserver
         {
             return false;
         }
-        return Objects.equals(host, client.host) && Objects.equals(clientListener, client.clientListener);
+        return Objects.equals(address, client.address) && Objects.equals(clientListener, client.clientListener);
     }
     @Override
     public int hashCode()
     {
-        return Objects.hash(host, clientListener);
+        return Objects.hash(address, clientListener);
     }
     @Override
     public String toString()
     {
         return "Client{" +
-                "host=" + host +
+                "address=" + address +
                 ", connectionObserver=" + clientListener +
                 '}';
     }

@@ -8,12 +8,12 @@ package se.laz.casual.statistics.pool
 
 import spock.lang.Specification
 
-class HostTest extends Specification
+class AddressTest extends Specification
 {
    def 'failed creation'()
    {
       when:
-      new Host(host, port)
+      new Address(host, port)
       then:
       thrown(NullPointerException)
       where:
@@ -27,7 +27,7 @@ class HostTest extends Specification
       def hostName = 'shiny'
       def portNumber = 1234
       when:
-      def host = new Host(hostName, portNumber)
+      def host = new Address(hostName, portNumber)
       then:
       host.hostName() == hostName
       host.portNumber() == portNumber

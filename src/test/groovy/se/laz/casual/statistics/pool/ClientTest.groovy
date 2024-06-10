@@ -79,7 +79,7 @@ class ClientTest extends Specification
       def clientListener = Mock(ClientListener){
          1 * disconnected(_)
       }
-      Host host = new Host(eventServerUrl.getHost(), eventServerUrl.getPort())
+      Address host = new Address(eventServerUrl.getHost(), eventServerUrl.getPort())
       Client client = Client.of(host, clientListener, eventStore)
       client.connect().join()
       when:

@@ -6,20 +6,20 @@
 
 package se.laz.casual.statistics.configuration;
 
-import se.laz.casual.statistics.pool.Host;
+import se.laz.casual.statistics.pool.Address;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public record Configuration(List<Host> hosts)
+public record Configuration(List<Address> addresses)
 {
     public Configuration
     {
-        Objects.requireNonNull(hosts, "hosts cannot be null");
+        Objects.requireNonNull(addresses, "addresses cannot be null");
     }
-    public List<Host> hosts()
+    public List<Address> addresses()
     {
-        return Collections.unmodifiableList(hosts);
+        return Collections.unmodifiableList(addresses);
     }
 }

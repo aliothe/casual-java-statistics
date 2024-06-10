@@ -8,9 +8,9 @@ package se.laz.casual.statistics.pool;
 
 import java.util.Objects;
 
-public record Host(String hostName, Integer portNumber)
+public record Address(String hostName, Integer portNumber)
 {
-    public Host
+    public Address
     {
         Objects.requireNonNull(hostName, "hostName cannot be null");
         Objects.requireNonNull(portNumber, "portNumber cannot be null");
