@@ -28,7 +28,7 @@ public class Client implements EventObserver, ConnectionObserver
     private final ClientListener clientListener;
     private final AugmentedEventStore eventStore;
 
-    public Client(Address address, ClientListener clientListener, AugmentedEventStore eventStore)
+    private Client(Address address, ClientListener clientListener, AugmentedEventStore eventStore)
     {
         this.address = address;
         this.clientListener = clientListener;

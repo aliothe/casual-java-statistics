@@ -11,6 +11,7 @@ import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import se.laz.casual.statistics.configuration.Configuration;
 import se.laz.casual.statistics.configuration.ConfigurationService;
+import se.laz.casual.statistics.pool.ClientFactory;
 import se.laz.casual.statistics.pool.ClientPool;
 
 import java.util.UUID;
@@ -39,7 +40,7 @@ public class Main
                 EventWriter eventWriter = new EventWriter(AugmentedEventStoreFactory.getStore(domainId), ServiceCallStatistics::store, this);
                 executorService.submit(eventWriter::waitForMessageAndStore);
                 Configuration configuration = ConfigurationService.of().getConfiguration();
-                ClientPool pool = ClientPool.of(configuration, 30_000L, scheduledExecutorService::schedule, domainId);
+                ClientPool pool = ClientPool.of(configuration, 30_000L, scheduledExecutorService::schedule, ClientFactory::createClient, domainId);
                 pool.connect();
                 Quarkus.waitForExit();
             }

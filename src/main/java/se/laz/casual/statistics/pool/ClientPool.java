@@ -26,37 +26,34 @@ public class ClientPool implements ClientListener
     private final UUID domainId;
     private final Configuration configuration;
     private final ScheduleFunction scheduleFunction;
+    private final CreateClientFunction createClientFunction;
     long maxBackoffMilliseconds;
-    private ClientPool(Configuration config, long maxBackoffMilliseconds, ScheduleFunction scheduleFunction, UUID domainId)
+    private ClientPool(Configuration config, long maxBackoffMilliseconds, ScheduleFunction scheduleFunction, CreateClientFunction createClientFunction, UUID domainId)
     {
         this.configuration = config;
         this.maxBackoffMilliseconds = maxBackoffMilliseconds;
         this.scheduleFunction = scheduleFunction;
+        this.createClientFunction = createClientFunction;
         this.domainId = domainId;
     }
-    public static ClientPool of(Configuration config, long maxBackoffMilliseconds, ScheduleFunction scheduleFunction, UUID domainId)
+    public static ClientPool of(Configuration config, long maxBackoffMilliseconds, ScheduleFunction scheduleFunction, CreateClientFunction createClientFunction, UUID domainId)
     {
         Objects.requireNonNull(config, "config cannot be null");
         Objects.requireNonNull(scheduleFunction, "scheduleFunction cannot be null");
+        Objects.requireNonNull(createClientFunction, "clientCreator cannot be null");
         Objects.requireNonNull(domainId, "domainId cannot be null");
-        return new ClientPool(config, maxBackoffMilliseconds, scheduleFunction, domainId);
+        return new ClientPool(config, maxBackoffMilliseconds, scheduleFunction, createClientFunction, domainId);
     }
     public void connect()
     {
         configuration.addresses().parallelStream().forEach(this::connect);
     }
-
     private void connect(Address address)
     {
         Objects.requireNonNull(configuration, "configuration cannot be null");
         Objects.requireNonNull(scheduleFunction, "scheduleFunction cannot be null");
         AugmentedEventStore eventStore = AugmentedEventStoreFactory.getStore(domainId);
-        Supplier<Client> clientSupplier = () -> {
-            Client client = Client.of(address, this, eventStore);
-            client.connect().join();
-            LOG.info(() ->"Connected to " + address);
-            return client;
-        };
+        Supplier<Client> clientSupplier = () -> createClientFunction.create(address, this, eventStore);
         Consumer<Client> clientConsumer = clients::add;
         new RepeatUntilSuccessTask<>(clientSupplier, clientConsumer, scheduleFunction, BackoffHelper.of(maxBackoffMilliseconds)).start();
     }
