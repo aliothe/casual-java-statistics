@@ -28,7 +28,12 @@ public class ConfigurationService
     public Configuration getConfiguration()
     {
         String configurationFile = Optional.ofNullable(System.getenv(ENV_VAR_NAME)).orElseThrow(() -> new ConfigurationServiceException("Missing environment variable " + ENV_VAR_NAME));
-        return getConfiguration(configurationFile);
+        Configuration configuration = getConfiguration(configurationFile);
+        if(configuration.addresses().isEmpty())
+        {
+            throw new ConfigurationServiceException("There are zero addresses configured in the pool configuration file " +  System.getenv(ENV_VAR_NAME));
+        }
+        return configuration;
     }
     private Configuration getConfiguration(String filename)
     {
