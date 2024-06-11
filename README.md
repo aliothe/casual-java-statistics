@@ -17,6 +17,10 @@ It looks like this:
 }
 ```
 
+## Example execution
+
+
+
 ## How to query for information
 
 The endpoints that can be used for querying of information are as follows:

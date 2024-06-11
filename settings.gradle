@@ -5,6 +5,8 @@
  */
 //-*- coding: utf-8 -*-
 pluginManagement {
+    def quarkusPluginId='io.quarkus'
+    def quarkusPluginVersion='3.11.1'
     repositories {
         mavenCentral()
         gradlePluginPortal()
