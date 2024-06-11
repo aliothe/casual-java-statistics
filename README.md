@@ -1,5 +1,83 @@
 # casual-java-statistics
 
+## What is it?
+
+This is an application that connects to ( 1 - n) # of casual event servers to aggregate service call statistics.
+
+It relies on a configuration file which is pointed to by the environment variable CASUAL_STATISTICS_CONFIGURATION_FILE.
+Note, it should be the absolute path.
+
+There's an example configuration file, `example-pools.json` in the root of the repository.
+It looks like this:
+```json
+{
+    "addresses":[         
+        {"hostName":"10.98.129.216", "portNumber":7698}
+    ]
+}
+```
+
+## How to query for information
+
+The endpoints that can be used for querying of information are as follows:
+* 'http://localhost:8080/statistics` - statistics for all connections
+* 'http://localhost:8080/statistics/10.98.129.216:7698' - statistics for the connection `10.98.129.216:7698`
+
+Example output:
+```json
+[
+  {
+    "connection": {
+      "connectionName": "10.98.129.216:7698"
+    },
+    "entries": [
+      {
+        "serviceCall": {
+          "serviceName": "javaEcho",
+          "order": "SEQUENTIAL"
+        },
+        "accumulatedData": {
+          "numberOfServiceCalls": 9,
+          "averageTime": 0.002,
+          "minTime": 0.001,
+          "maxTime": 0.003,
+          "numberOfPending": 9,
+          "pendingAverageTime": 0.001,
+          "lastCall": "2024-06-11T10:43:14.038054"
+        }
+      },
+      {
+        "serviceCall": {
+          "serviceName": "javaEcho",
+          "order": "CONCURRENT"
+        },
+        "accumulatedData": {
+          "numberOfServiceCalls": 9,
+          "averageTime": 0.009,
+          "minTime": 0.004,
+          "maxTime": 0.015,
+          "numberOfPending": 0,
+          "pendingAverageTime": 0.0,
+          "lastCall": "2024-06-11T10:43:14.034087"
+        }
+      }
+    ]
+  }
+]
+```
+ 
+Legend for the accumulated data:
+* numberOfServiceCalls - the number of service calls
+* averageTime - the average time, in seconds
+* minTime - the minimum time, in seconds
+* maxTime - the maximum time, in seconds
+* numberOfPending - number of pending calls
+* pendingAverageTime - the average pending time, in seconds
+* lastCall - when the last call was called as LocalDateTime using system default ZoneId
+  
+
+
+# Quarkus information
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
@@ -47,27 +125,3 @@ You can then execute your native executable with: `./build/casual-java-statistic
 
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/gradle-tooling.
 
-## Related Guides
-
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- JDBC Driver - H2 ([guide](https://quarkus.io/guides/datasource)): Connect to the H2 database via JDBC
-- Hibernate Validator ([guide](https://quarkus.io/guides/validation)): Validate object properties (field, getter) and method parameters for your beans (REST, CDI, Jakarta Persistence)
-- JDBC Driver - DB2 ([guide](https://quarkus.io/guides/datasource)): Connect to the DB2 database via JDBC
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
-
-## Provided Code
-
-### Hibernate ORM
-
-Create your first JPA entity
-
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
-
-[Related Hibernate with Panache section...](https://quarkus.io/guides/hibernate-orm-panache)
-
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
