@@ -18,7 +18,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.BooleanSupplier;
 
 @QuarkusMain
 public class Main
@@ -27,9 +26,8 @@ public class Main
     {
         Quarkus.run(StatisticsApp.class, args);
     }
-    public static class StatisticsApp implements QuarkusApplication, BooleanSupplier
+    public static class StatisticsApp implements QuarkusApplication
     {
-        private boolean keepRunning = true;
         @Override
         public int run(String... args)
         {
@@ -37,7 +35,7 @@ public class Main
             try(ExecutorService executorService = Executors.newSingleThreadExecutor();
                 ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2);)
             {
-                EventWriter eventWriter = new EventWriter(AugmentedEventStoreFactory.getStore(domainId), ServiceCallStatistics::store, this);
+                EventWriter eventWriter = new EventWriter(AugmentedEventStoreFactory.getStore(domainId), ServiceCallStatistics::store, () -> true);
                 executorService.submit(eventWriter::waitForMessageAndStore);
                 Configuration configuration = ConfigurationService.of().getConfiguration();
                 ClientPool pool = ClientPool.of(configuration, 30_000L, scheduledExecutorService::schedule, ClientFactory::createClient, domainId);
@@ -45,12 +43,6 @@ public class Main
                 Quarkus.waitForExit();
             }
             return 0;
-        }
-
-        @Override
-        public boolean getAsBoolean()
-        {
-            return keepRunning;
         }
     }
 }
